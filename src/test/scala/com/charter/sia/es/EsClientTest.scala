@@ -241,8 +241,6 @@ class EsClientTest extends FunSuite with Matchers with EsTestBase {
   }
 
   private def asMap(esObjs: List[EsObj[Person]]): Map[String, Person] = {
-    val map = scala.collection.mutable.Map[String, Person]()
-    esObjs.foreach(esObj => map += (esObj.id -> esObj.data))
-    map.toMap
+    Map(esObjs map { esObj => esObj.id -> esObj.data }: _*)
   }
 }
