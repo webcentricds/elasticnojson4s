@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.charter.sia.es</groupId>
+    <artifactId>elasticnojson4s</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <scalaVersion>2.12.2</scalaVersion>
+        <elastic4sVersion>5.6.0</elastic4sVersion>
+        <scalatestVersion>3.0.4</scalatestVersion>
+        <commonsLang3Version>3.4</commonsLang3Version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scalaVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sksamuel.elastic4s</groupId>
+                <artifactId>elastic4s-tcp_2.12</artifactId>
+                <version>${elastic4sVersion}</version>
+            </dependency>
+
+            <!--"com.sksamuel.elastic4s" %% "elastic4s-jackson" % elastic4sVersion,-->
+            <!--"com.sksamuel.elastic4s" %% "elastic4s-play-json" % elastic4sVersion,-->
+            <!--"com.sksamuel.elastic4s" %% "elastic4s-circe" % elastic4sVersion,-->
+            <!--"com.sksamuel.elastic4s" %% "elastic4s-json4s" % elastic4sVersion,-->
+            <dependency>
+                <groupId>com.sksamuel.elastic4s</groupId>
+                <artifactId>elastic4s-jackson_2.12</artifactId>
+                <version>${elastic4sVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sksamuel.elastic4s</groupId>
+                <artifactId>elastic4s-play-json_2.12</artifactId>
+                <version>${elastic4sVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sksamuel.elastic4s</groupId>
+                <artifactId>elastic4s-circe_2.12</artifactId>
+                <version>${elastic4sVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sksamuel.elastic4s</groupId>
+                <artifactId>elastic4s-json4s_2.12</artifactId>
+                <version>${elastic4sVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_2.12</artifactId>
+                <version>${scalatestVersion}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commonsLang3Version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sksamuel.elastic4s</groupId>
+            <artifactId>elastic4s-tcp_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sksamuel.elastic4s</groupId>
+            <artifactId>elastic4s-jackson_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sksamuel.elastic4s</groupId>
+            <artifactId>elastic4s-play-json_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sksamuel.elastic4s</groupId>
+            <artifactId>elastic4s-circe_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sksamuel.elastic4s</groupId>
+            <artifactId>elastic4s-json4s_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.7</version>
+                    <configuration>
+                        <skipTests>true</skipTests>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>3.3.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <scalaVersion>${scalaVersion}</scalaVersion>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.scalatest</groupId>
+                    <artifactId>scalatest-maven-plugin</artifactId>
+                    <version>1.0</version>
+                    <configuration>
+                        <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                        <junitxml>.</junitxml>
+                        <filereports>WDF TestSuite.txt</filereports>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
