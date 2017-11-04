@@ -21,10 +21,10 @@ class EsExporterTest extends FunSuite /*with Matchers*/ {
 
   test("A Complete Elastic4s Example") {
     import com.sksamuel.elastic4s.ElasticDsl._
-    //val client: HttpClient = HttpClient(ElasticsearchClientUri("localhost", 9200))
-    //val client = TcpClient.transport(ElasticsearchClientUri("localhost", 9300))
+    //val client: HttpClient = HttpClient(ElasticsearchClientUri("elastic5-6", 9200))
+    //val client = TcpClient.transport(ElasticsearchClientUri("elastic5-6", 9300))
     val settingsBuilder = Settings.builder().put("cluster.name", "docker-cluster")
-    val tcpClient: TcpClient = TcpClient.transport(settingsBuilder.build, ElasticsearchClientUri("localhost", 9300))
+    val tcpClient: TcpClient = TcpClient.transport(settingsBuilder.build, ElasticsearchClientUri("elastic5-6", 9300))
 
     tcpClient.execute {
       deleteIndex(indexName)

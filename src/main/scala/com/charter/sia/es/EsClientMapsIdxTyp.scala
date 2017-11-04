@@ -5,6 +5,7 @@ import com.sksamuel.elastic4s.TcpClient
 import com.sksamuel.elastic4s.bulk.RichBulkResponse
 import com.sksamuel.elastic4s.index.RichIndexResponse
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
+import com.sksamuel.elastic4s.searches.sort.SortDefinition
 import com.sksamuel.elastic4s.update.RichUpdateResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.reindex.BulkByScrollResponse
@@ -61,6 +62,7 @@ class EsClientMapsIdxTyp(val indexName: String,
                    quitAfter: Long = 0,
                    queryDefinition: Option[QueryDefinition] = EsClientMaps.defaultQueryDefinition,
                    storedFields: Option[Seq[String]] = EsClientMaps.defaultStoredFields,
+                   sorts: Option[Iterable[SortDefinition]] = EsClientMaps.defaultSorts,
                    scrollTimeout: String = EsClientMaps.defaultScrollTimeout,
                    scrollFetchSize: Int = EsClientMaps.defaultScrollFetchSize,
                    searchType: SearchType = EsClientMaps.defaultSearchType): Unit =
@@ -70,6 +72,7 @@ class EsClientMapsIdxTyp(val indexName: String,
                   quitAfter,
                   queryDefinition,
                   storedFields,
+                  sorts,
                   scrollTimeout,
                   scrollFetchSize,
                   searchType)

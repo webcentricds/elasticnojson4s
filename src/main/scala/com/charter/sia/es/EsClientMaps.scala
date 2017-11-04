@@ -8,12 +8,13 @@ import com.sksamuel.elastic4s.TcpClient
 import com.sksamuel.elastic4s.bulk.RichBulkResponse
 import com.sksamuel.elastic4s.index.RichIndexResponse
 import com.sksamuel.elastic4s.indexes.IndexDefinition
-import com.sksamuel.elastic4s.searches.RichSearchResponse
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
+import com.sksamuel.elastic4s.searches.sort.SortDefinition
+import com.sksamuel.elastic4s.searches.{RichSearchResponse, SearchDefinition}
 import com.sksamuel.elastic4s.update.{RichUpdateResponse, UpdateDefinition}
+import com.typesafe.scalalogging.LazyLogging
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.reindex.BulkByScrollResponse
-import org.slf4j.LoggerFactory
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
@@ -26,13 +27,12 @@ object EsClientMaps {
   val defaultStoredFields: Option[Seq[String]] = None
   val defaultScrollFetchSize: Int = 1000
   val defaultSearchType: SearchType = SearchType.DEFAULT
-  val defaultNumReturned = 1000
+  val defaultNumReturned = 0
+  val defaultSorts = None
   val awaitDur = Duration(100, SECONDS)
 }
 
-class EsClientMaps(val tcpClient: TcpClient) {
-  private val LOG = LoggerFactory.getLogger(classOf[EsClientMaps])
-
+class EsClientMaps(val tcpClient: TcpClient) extends LazyLogging {
   //===========================================================================
   // Count
   //===========================================================================
@@ -261,6 +261,7 @@ class EsClientMaps(val tcpClient: TcpClient) {
     * @param consumer         A lambda that gets called for each result
     * @param quitAfter        An optional short circuit stopping mechanism for query.  Defaults to all
     * @param queryDefinition  An optional query to filter with.  Defaults to none
+    * @param sorts            Optional fields that you can specify sorts with
     * @param storedFields     Optional fields that we will get from documents.  Defaults to all
     * @param scrollTimeout    The scroll timout (ElasticSearch parameter)
     * @param scrollFetchSize  The number of objects to get fetched for each scroll
@@ -272,34 +273,18 @@ class EsClientMaps(val tcpClient: TcpClient) {
            quitAfter: Long = 0,
            queryDefinition: Option[QueryDefinition] = EsClientMaps.defaultQueryDefinition,
            storedFields: Option[Seq[String]] = EsClientMaps.defaultStoredFields,
+           sorts: Option[Iterable[SortDefinition]] = EsClientMaps.defaultSorts,
            scrollTimeout: String = EsClientMaps.defaultScrollTimeout,
            scrollFetchSize: Int = EsClientMaps.defaultScrollFetchSize,
            searchType: SearchType = EsClientMaps.defaultSearchType): Unit = {
 
-    //=========================================================================
-    // TODO: Find a more elegant way to do this
-    //=========================================================================
-    val sr = if(queryDefinition.isDefined && storedFields.isDefined)
-      search(indexName/indexType).keepAlive(scrollTimeout)
-                                 .size(scrollFetchSize)
-                                 .searchType(searchType)
-                                 .query(queryDefinition.get)
-                                 .storedFields(storedFields.get)
-    else if(queryDefinition.isDefined)
-      search(indexName/indexType).keepAlive(scrollTimeout)
-                                 .size(scrollFetchSize)
-                                 .searchType(searchType)
-                                 .query(queryDefinition.get)
-    else if(storedFields.isDefined)
-      search(indexName/indexType).keepAlive(scrollTimeout)
-                                 .size(scrollFetchSize)
-                                 .searchType(searchType)
-                                 .storedFields(storedFields.get)
-    else
-      search(indexName/indexType).keepAlive(scrollTimeout)
-                                 .size(scrollFetchSize)
-                                 .searchType(searchType)
-    //=========================================================================
+    val sr = createSearchRequest(indexName,
+                                 indexType,
+                                 queryDefinition,
+                                 storedFields,
+                                 scrollTimeout,
+                                 scrollFetchSize,
+                                 sorts)
 
     tailRecurse(tcpClient.execute {
                   sr
@@ -331,5 +316,25 @@ class EsClientMaps(val tcpClient: TcpClient) {
                     scrollTimeout,
                     quitAfter)
     }
+  }
+
+  private def createSearchRequest(indexName: String,
+                                  indexType: String,
+                                  queryDefinition: Option[QueryDefinition] = EsClientMaps.defaultQueryDefinition,
+                                  storedFields: Option[Seq[String]] = EsClientMaps.defaultStoredFields,
+                                  scrollTimeout: String = EsClientMaps.defaultScrollTimeout,
+                                  scrollFetchSize: Int = EsClientMaps.defaultScrollFetchSize,
+                                  sorts: Option[Iterable[SortDefinition]] = EsClientMaps.defaultSorts): SearchDefinition = {
+    // VAR on purpose, otherwise creating the search definition gets pretty messy.
+    var sr = search(indexName/indexType).keepAlive(scrollTimeout)
+      .size(scrollFetchSize)
+      .searchType(SearchType.DEFAULT)
+    if(queryDefinition != None)
+      sr = sr.query(queryDefinition.get)
+    if(storedFields != None)
+      sr = sr.storedFields(storedFields.get)
+    if(sorts != None)
+      sr = sr.sortBy(sorts.get)
+    sr
   }
 }

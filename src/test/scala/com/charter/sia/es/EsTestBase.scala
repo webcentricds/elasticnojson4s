@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 trait EsTestBase {
   val settingsBuilder: Settings.Builder = Settings.builder().put("cluster.name", "docker-cluster")
-  val tcpClient: TcpClient = TcpClient.transport(settingsBuilder.build, ElasticsearchClientUri("localhost", 9300))
+  val tcpClient: TcpClient = TcpClient.transport(settingsBuilder.build, ElasticsearchClientUri("elastic5-6", 9300))
 
   def sleep(seconds: Int): Unit = Thread.sleep(seconds * 1000)
 }

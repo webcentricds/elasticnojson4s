@@ -6,19 +6,17 @@ import com.sksamuel.elastic4s.TcpClient
 import com.sksamuel.elastic4s.bulk.RichBulkResponse
 import com.sksamuel.elastic4s.index.RichIndexResponse
 import com.sksamuel.elastic4s.searches.queries.QueryDefinition
+import com.sksamuel.elastic4s.searches.sort.SortDefinition
 import com.sksamuel.elastic4s.update.RichUpdateResponse
 import com.sksamuel.exts.concurrent.Futures.RichFuture
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.reindex.BulkByScrollResponse
-import org.slf4j.LoggerFactory
 
 import scala.concurrent.Future
 
 
 class EsClient[T](val esClientMapsIdxTyp: EsClientMapsIdxTyp,
                   val tClazz: Class[T]) {
-  private val LOG = LoggerFactory.getLogger(classOf[EsClientMaps])
-
   def this(tcpClient: TcpClient,
            indexName: String,
            indexType: String,
@@ -87,6 +85,7 @@ class EsClient[T](val esClientMapsIdxTyp: EsClientMapsIdxTyp,
                    quitAfter: Long = 0,
                    queryDefinition: Option[QueryDefinition] = EsClientMaps.defaultQueryDefinition,
                    storedFields: Option[Seq[String]] = EsClientMaps.defaultStoredFields,
+                   sorts: Option[Iterable[SortDefinition]] = EsClientMaps.defaultSorts,
                    scrollTimeout: String = EsClientMaps.defaultScrollTimeout,
                    scrollFetchSize: Int = EsClientMaps.defaultScrollFetchSize,
                    searchType: SearchType = EsClientMaps.defaultSearchType): Unit = {
@@ -95,6 +94,7 @@ class EsClient[T](val esClientMapsIdxTyp: EsClientMapsIdxTyp,
                             quitAfter,
                             queryDefinition,
                             storedFields,
+                            sorts,
                             scrollTimeout,
                             scrollFetchSize,
                             searchType)

@@ -15,7 +15,7 @@ class EsClientMapsTest extends FunSuite with Matchers {
 
   test("Test Insert/Update/Upsert Behavior") {
     val settingsBuilder = Settings.builder().put("cluster.name", "docker-cluster")
-    val tcpClient = TcpClient.transport(settingsBuilder.build, ElasticsearchClientUri("localhost", 9300))
+    val tcpClient = TcpClient.transport(settingsBuilder.build, ElasticsearchClientUri("elastic5-6", 9300))
     val esIndex = new EsIndex(tcpClient)
     val esClientMaps = new EsClientMaps(tcpClient)
 
